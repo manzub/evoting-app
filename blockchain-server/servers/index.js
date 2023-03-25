@@ -1,6 +1,8 @@
 const { apiResponse } = require('../helpers/network');
 const TrnxAddOn = require('../src/transactions/trnx.addon');
 
+// TODO: create add-on script to read and carry out functions
+
 function currencyValue(wallet, blockchain) {
   const totalSupply = !process.env.MINT ? 1000 : (parseInt(process.env.MINT) * 2);
   const circulatingSupply = [...wallet.accounts.filter(x => !x.isZero)].reduce(function (sum, account) {
