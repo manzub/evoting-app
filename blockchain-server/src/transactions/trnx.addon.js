@@ -14,6 +14,25 @@ class TrnxAddOn {
     let hash = cryptoHash(timestamp, data);
     return new this({ timestamp, hash, data });
   }
+
+  static validBallot(chain, ballotId) {
+    let isValidBallot = false;
+    for (let index = 0; index < chain.length; index++) {
+      const block = chain[index];
+      for (let transaction of block.data) {
+        if(transaction.addon) {
+          if (transaction.addon.id) {
+            const addonData = transaction.addon.data;
+            if (!addonData.created_at) continue;
+            if(addonData.ballotId === ballotId) {
+              isValidBallot = true;
+            }
+          }
+        } else continue;
+      }
+    }
+    return isValidBallot;
+  }
 }
 
 module.exports = TrnxAddOn;

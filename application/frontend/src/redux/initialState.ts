@@ -1,6 +1,6 @@
 export const initialState: UserState = {
   user: {
-    name: '', email: '', firstname: '', lastname: '', accessToken: null, isAuthenticated: false, role: 2
+    name: '', email: '', address: '', firstname: '', lastname: '', accessToken: null, isAuthenticated: false, role: 2
   },
 }
 

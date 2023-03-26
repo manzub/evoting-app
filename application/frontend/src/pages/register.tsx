@@ -6,28 +6,41 @@ import backendApi from "../utils/backendApi";
 const Register: React.FC = () => {
   const navigate = useNavigate();
 
-  const [form, updateForm] = React.useState({ firstname: '', lastname: '', email: '', password: '', rppassword: '' });
-  const [error, setError] = React.useState<Error>();
+  const [form, updateForm] = React.useState({ firstname: '', lastname: '', email: '', address: '', password: '', rppassword: '' });
+  const [error, setError] = React.useState('');
 
-  const mutation = useMutation(function (postData: { email: string, password: string, firstname: string, lastname: string }) {
+  const mutation = useMutation(function (postData: { email: string, address: string, password: string, firstname: string, lastname: string }) {
     if (form.rppassword !== form.password) throw new Error('Passwords Don\'t Match');
     if (!(postData.email && postData.password && postData.firstname)) throw new Error('Fill in all fields');
     return backendApi.signup(postData);
   }, {
     onSuccess: function (data) {
       if (data.status === 1) {
-        // TODO: create blockchain data after login
         alert(data.message);
         navigate('/login')
       } else throw new Error(data.message);
-      
-    }, onError: (error: any) => setError(error)
+
+    }, onError: (error: Error) => setError(error.message)
   })
 
 
-  function processSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function processSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    mutation.mutate(form);
+    try {
+      if (form.address !== '') {
+        const accountInfo = await backendApi.checkAccountExists(form.address);
+        if (accountInfo.status === 1 && (accountInfo.data.address === form.address)) {
+          mutation.mutate(form);
+        } else throw new Error('Invalid wallet address');
+      } else {
+        const accountInfo = await backendApi.createAccount();
+        if(accountInfo.status === 1) {
+          mutation.mutate({...form, address: accountInfo.data.address});
+        }
+      }
+    } catch (error: any) {
+      setError(error?.message);
+    }
   }
 
   return (<div className="container">
@@ -43,7 +56,7 @@ const Register: React.FC = () => {
                 <div className="p-5">
                   <div className="text-center mb-4">
                     <h4 className="text-dark">Welcome Back!</h4>
-                    {(mutation.error || error) && <strong className="text-danger">Uh-oh <span>{error?.message || mutation.error!.message}</span></strong>}
+                    {(mutation.error || error) && <strong className="text-danger">Uh-oh <span>{error || mutation.error!.message}</span></strong>}
                   </div>
                   <form onSubmit={processSubmit} className="user">
                     <div className="form-group row">
@@ -77,6 +90,17 @@ const Register: React.FC = () => {
                         id="exampleInputEmail"
                         aria-describedby="emailHelp"
                         placeholder="Enter Email Address..." />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="exampleInputAddress" data-toggle="tooltip" data-placement="top" title="connect your existing wallet address">Link your blockchain address (optional)</label>
+                      <input
+                        className="form-control form-control-user"
+                        type="text"
+                        value={form.address}
+                        onChange={({ target }) => updateForm({ ...form, address: target.value })}
+                        id="exampleInputAddress"
+                        aria-describedby="emailHelp"
+                        placeholder="Enter Blockchain Address..." />
                     </div>
                     <div className="form-group row">
                       <div className="col-sm-6 mb-3 mb-sm-0">

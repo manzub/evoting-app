@@ -84,7 +84,7 @@ const Home: React.FC<Props> = ({ ballots, user }) => {
                 <h4>Top Contenders</h4>
                 <div className="mb-4">
                   {ballot.candidates.map((candidate, idx) => {
-                    let progress = (candidate.votes / totalVotes) * 100;
+                    let progress = Math.floor((candidate.votes / totalVotes) * 100);
                     return (<div key={idx} className="progress mb-2" style={{ height: '30px' }}>
                       <div className="progress-bar" aria-valuenow={progress} aria-valuemin={0} aria-valuemax={100} style={{ width: `${progress}%` }}>{progress}%</div>
                     </div>)

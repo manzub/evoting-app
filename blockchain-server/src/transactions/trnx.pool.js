@@ -64,9 +64,7 @@ class TransactionPool {
   }
 
   pendingTransactions() {
-    return Object.values(this.pool).filter(trnx => {
-      if(Transaction.validTransaction(trnx) && trnx.status == 'pending') return true
-    })
+    return Object.values(this.pool).filter(trnx => (trnx.status == 'pending' && Transaction.validTransaction(trnx)));
   }
 
   validTransactions() {

@@ -25,7 +25,6 @@ function App() {
     }
   }, enabled: !!user.isAuthenticated })
 
-  // TODO: show login page if user not loggedin and sidebar page
   return (
     <Routes>
       <Route path='/' element={

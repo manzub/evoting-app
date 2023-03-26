@@ -34,6 +34,9 @@
       window.onbeforeunload = function(event) {
         return confirm('Are you sure you want to refresh? You will lose everything.')
       }
+      $(function () {
+        $('[data-toggle="tooltip"]').tooltip()
+      })
     </script>
   </body>
 </html>

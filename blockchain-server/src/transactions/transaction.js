@@ -39,6 +39,7 @@ class Transaction {
       console.error('Invalid Transaction');
       return false
     }
+    console.log(walletUtils.verifySignature({ address: input.address, data: outputMap, signature: input.signature }));
     if(!walletUtils.verifySignature({ address: input.address, data: outputMap, signature: input.signature })) {
       console.log('Invalid transaction signature');
       return false

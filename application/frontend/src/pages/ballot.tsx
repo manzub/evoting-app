@@ -1,8 +1,9 @@
+import axios from "axios";
 import React, { useEffect } from "react";
 import { useMutation } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import PageWrapper from "../components/PageWrapper";
-import backendApi from "../utils/backendApi";
+import backendApi, { blockchainUrl } from "../utils/backendApi";
 
 type Props = {
   ballots: IBallot[],
@@ -23,20 +24,33 @@ const Ballot: React.FC<Props> = ({ ballots, user }) => {
     if (!postData.ballotId || !postData.candidateId) throw new Error('Please select a candidate');
     return backendApi.voteCandidate(postData, (user.accessToken || ''));
   }, {
-    onSuccess: function (data) {
-      console.log(data.message);
+    onSuccess: async function (data, variables) {
       if (data.status === 1) {
+        const addon = { ballotId: variables.ballotId, vote: variables.candidateId };
+        await backendApi.createBallotInChain({ sender: user.address, amount: 0.01, addon });
         alert('you have successfully voted a candidate');
       } else throw new Error(data.message);
     }, onError: (error: Error) => setError(error.message)
   })
 
-  function processSubmit() {
-    // TODO: handle null vote and blockchain check
-    // HOW-TO: connect to the blockchain and check for transactions involving this user and this ballot id
-    // if found tell them they can't vote on this
-    // else allow them to vote and add this detail as an addon
-    mutation.mutate({ballotId: (currentBallot?._id || ''), candidateId: vote});
+  async function processSubmit() {
+    try {
+      const postData = { address: user.address, ballotId: currentBallot?._id };
+      const voteCheck = (await axios.post(`${blockchainUrl}/evoting/ballot/has-voted`, postData)).data;
+      
+      if(voteCheck.status === 2) {
+        await backendApi.deleteBallot((currentBallot?._id || ''), (user.accessToken || ''))
+        navigate('/');
+      }
+
+      if(voteCheck.hasVoted) {
+        alert('You have already voted on this ballot');
+        return true;
+      }
+      !voteCheck.hasVoted && mutation.mutate({ballotId: (currentBallot?._id || ''), candidateId: vote});
+    } catch (error: any) {
+      setError(Error(error).message);
+    }
   }
 
   useEffect(() => {
@@ -44,7 +58,14 @@ const Ballot: React.FC<Props> = ({ ballots, user }) => {
       alert('Cannot find this ballot');
       navigate('/');
     }
-  }, [currentBallot, navigate]);
+    axios.get(`${blockchainUrl}/evoting/valid-ballot/${currentBallot?._id}`).then((response) => {
+      if(!response.data.isValid) {
+        backendApi.deleteBallot((currentBallot?._id || ''), (user.accessToken || '')).then(() => {
+          navigate('/');
+        });
+      }
+    })
+  }, [currentBallot, navigate, user.accessToken]);
 
   return (<PageWrapper user={user}>
     <div className="card">

@@ -4,6 +4,11 @@
       "address": "5bcdfc857c30f5d75de8e7f8d5db55ca7d1aec2d25c80dc96947a88fab94ae3d",
       "passKey": "$2a$08$jINZJ7qBDnipfOAt2XTc9.4kongactXyFdkPaUBcPLrQqJk6QU23u",
       "apiKey": "e6085fa3-fd41-4e81-bdee-4bb6000cde99"
+    },
+    {
+      "address": "d5e570d8449cc808a83624c9b2a701684d31aafd013ec28f698ec2e73a32c0fb",
+      "passKey": "$2a$08$RXbtH7467jjOyjHTyTBKRujxY4XtwGzLn5LLf6IZ7BU5Dqec5SZsW",
+      "apiKey": "92719d5c-0536-46b8-83d1-5c0dbd0a62a2"
     }
   ]
 }

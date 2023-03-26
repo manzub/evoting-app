@@ -44,7 +44,7 @@ module.exports = {
     }).toString('hex');
   },
   verifySignature({ address, data, signature }) {
-    const { publicKey } = this.fetchKeyPair(address)
+    const { publicKey } = this.fetchKeyPair(`${address}__x1__key.dat`)
     return crypto.verify('sha256', Buffer.from(JSON.stringify(data)), {
         key:publicKey,
         padding:crypto.constants.RSA_PKCS1_PSS_PADDING

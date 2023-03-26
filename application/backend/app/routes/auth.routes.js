@@ -23,8 +23,8 @@ module.exports = function(app) {
       if(!passwordIsValid) return res.send({ status:0, message: 'Invalid password' })
       // proceed signin
       const token = jsonwebtoken.sign({ id: user._id, email: user.email }, secretKey, { expiresIn: 86400 });
-      const { email, firstname, lastname, _id:id, role } = user;
-      res.send({ status: 1, message: 'Login Successful', user: {email, firstname, lastname, id, accessToken: token, role} })
+      const { email, address, firstname, lastname, _id:id, role } = user;
+      res.send({ status: 1, message: 'Login Successful', user: {email, address, firstname, lastname, id, accessToken: token, role} })
     }).catch(err => {
       if (err) return res.send({ status: 0, message: err.message })
     })
@@ -50,6 +50,7 @@ module.exports = function(app) {
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
+      address: req.body.address,
       password: bcrypt.hashSync(req.body.password, 8),
     })
 

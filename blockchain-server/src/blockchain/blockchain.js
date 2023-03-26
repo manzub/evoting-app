@@ -11,6 +11,7 @@ class Blockchain {
   addBlock({block, data}) {
     const nb = Block.completeBlock({ block, data })
     this.chain.push(nb);
+    console.log('added block');
     // TODO: test save new block
     blockchainUtils.saveBlockLocal(nb)
 

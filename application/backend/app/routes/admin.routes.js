@@ -18,14 +18,13 @@ module.exports = function (app) {
 
   app.post('/admin/ballots/create', [authJwt.verifyToken], function (req, res) {
     const { title, description, candidates, duration } = req.body;
-    // TODO: create ballots logic
     const newBallot = new Ballots({
       title, description, candidates: candidates.map(item => ({...item, id:v4() })), duration,
       status: req.body.status || 'ongoing',
     })
 
     newBallot.save().then(() => {
-      res.send({ status: 1, message: "New service created successfully!" });
+      res.send({ status: 1, ballotId:newBallot._id.toString(), message: "New service created successfully!" });
     }).catch((err) => {
       res.send({ status: 0, message: err });
     })
@@ -41,7 +40,7 @@ module.exports = function (app) {
       }
     })
   })
-  app.post('/admin/ballots/vote', [authJwt.verifyToken, authJwt.isAdmin], function(req, res) {
+  app.post('/admin/ballots/vote', [authJwt.verifyToken], function(req, res) {
     Ballots.findOne({ _id: req.body.ballotId }).exec().then((ballot) => {
       if(ballot) {
         const candidates = ballot.candidates.map(function(candidate) {
@@ -59,9 +58,9 @@ module.exports = function (app) {
   })
 
   app.post('/admin/ballots/delete', [authJwt.verifyToken, authJwt.isAdmin], function (req, res) {
-    Ballots.findOne({ id: req.body.ballotId }).exec().then((ballot) => {
+    Ballots.findOne({ _id: req.body.ballotId }).exec().then((ballot) => {
       if(ballot) {
-        Ballots.deleteOne({ id: req.body.ballotId }).exec().then(() => {
+        Ballots.deleteOne({ _id: req.body.ballotId }).exec().then(() => {
           res.send({ status: 1, message: 'Ballot deleted successfully' });
         }).catch(err => {
           if(err) res.send({ status: 0, message: err })

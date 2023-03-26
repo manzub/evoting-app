@@ -16,23 +16,36 @@ const AddBallot: React.FC<Props> = ({ user }) => {
 
   const [error, setError] = React.useState('');
 
-  const mutation = useMutation(function(postData: IBallot) {
-    if(!(postData.description && postData.title)) throw new Error('Fill in all fields');
-    if(postData.candidates.length < 2) throw new Error('Please select atleast 2 candidates');
+  const mutation = useMutation(function (postData: IBallot) {
+    if (!(postData.description && postData.title)) throw new Error('Fill in all fields');
+    if (postData.candidates.length < 2) throw new Error('Please select atleast 2 candidates');
     return backendApi.createBallot(postData, (user.accessToken || ''));
-  }, { onSuccess: function(data) {
-    console.log(data.message);
-    if(data.status === 1) {
-      // TODO: let them know
-      alert(data.message);
-      navigate('/');
-    } else throw new Error(data.message);
-  }, onError: (error: Error) => setError(error.message) })
+  }, {
+    onSuccess: async function (data) {
+      if (data.status === 1) {
+        let created_at = new Date().toLocaleString();
+        const addon = { ballotId: data.ballotId, created_at };
+        await backendApi.createBallotInChain({sender:user.address, amount: 0.01, addon});
+        alert(`${data.message} and added to blockchain`);
+        navigate('/');
+      } else throw new Error(data.message);
+    }, onError: (error: Error) => setError(error.message)
+  })
 
-  function processSubmit(e: React.FormEvent<HTMLFormElement>) {
-    // add ballot id as a transaction to the blockchain under this user wallet
+  async function processSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    mutation.mutate(form);
+    // TODO: add ballot id as a transaction to the blockchain under this user wallet
+    try {
+      const accountInfo = await backendApi.checkAccountExists(user.address);
+      if (accountInfo.status === 1) {
+        let predictedGas = 0.01;
+        if (accountInfo.data.balance > (predictedGas * 0.01)) {
+          mutation.mutate(form);
+        } else throw new Error('Insufficient balance, please acquire more coins');
+      } else throw new Error('Cannot get wallet info');
+    } catch (error: any) {
+      setError(error?.message)
+    }
   }
 
   function addCandidate() {
@@ -58,7 +71,7 @@ const AddBallot: React.FC<Props> = ({ user }) => {
               <div className="col-md-6">
                 <form onSubmit={processSubmit}>
                   <h2>Ballot Info</h2>
-                  {(mutation.error || error) && <p className="text-danger">{error || mutation.error?.message}</p> }
+                  {(mutation.error || error) && <p className="text-danger">{error || mutation.error?.message}</p>}
                   <div className="form-group">
                     <input
                       type="text"

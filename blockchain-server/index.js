@@ -37,7 +37,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 require('./servers/index')(app, wallet, blockchain, transactionPool, p2pInstance)
-require('./servers/miner.routes')(app, blockchain, transactionPool, p2pInstance, wallet)
+require('./servers/evoting.routes')(app, wallet, blockchain)
+require('./servers/miner.routes')(app, blockchain, wallet)
 
 // default page not found route
 app.use("*", (req, res) => {
@@ -78,5 +79,35 @@ app.listen(HTTP_PORT, () => {
 let count = 0;
 cron.schedule('*/5 * * * * *', () => {
   count++
-  addToChain({ transactionPool, blockchain, p2pInstance }, count)
+  // addToChain({ transactionPool, blockchain, p2pInstance }, count)
+
+  // priodic add to blockchain
+  if(p2pInstance.nextBlock) {
+    const poolLength = Object.values(transactionPool.pool).length;
+    if(poolLength > 0) {
+      console.log(poolLength);
+      const pendingTransactions = transactionPool.pendingTransactions();
+      const completedTransactions = pendingTransactions.map(function(transaction) {
+        return {...transaction, status: 'complete'}
+      });
+
+      blockchain.addBlock({ block: p2pInstance.nextBlock, data: completedTransactions })
+      p2pInstance.broadcastChain();
+      transactionPool.multiRemoveTransaction(pendingTransactions);
+      console.log('Next block added to chain');
+      p2pInstance.removeNextBlock()
+    } else {
+      p2pInstance.removeNextBlock()
+      console.log('Next block ready, awaiting new trasnactions');
+    }
+  } else {
+    // reduce log intervals
+    if((count % 3) == 0) {
+      if(!p2pInstance.nextBlock && Object.values(transactionPool.pool).length > 0) {
+        console.log('Pending Transactions, Awaiting Miners');
+      } else {
+        console.log('Worker Ready');
+      }
+    }
+  }
 })

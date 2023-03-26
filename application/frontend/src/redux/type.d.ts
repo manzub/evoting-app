@@ -1,6 +1,7 @@
 interface IUser {
   name: string,
   email: string,
+  address: string,
   firstname: string,
   lastname: string,
   role: number

@@ -2,7 +2,7 @@ const { existingMiner, registerMiner } = require('../helpers');
 const { apiResponse } = require('../helpers/network');
 
 
-module.exports = function(app, blockchain, transactionPool, p2pInstance, wallet) {
+module.exports = function(app, blockchain, wallet) {
   app.post('/miner/register', function(req, res) {
     const { address, passKey } = req.body;
     if(address != '' && wallet.accounts.find(x => x.address == address)) {
