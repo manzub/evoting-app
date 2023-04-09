@@ -1,0 +1,26 @@
+{
+  "name": "blockchain-miner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "./index.js",
+  "scripts": {
+    "start": "node ./index.js -e prod",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Wizzdom",
+  "license": "ISC",
+  "bin": {
+    "miner-cli": "./index.js"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "boxen": "4.0",
+    "chalk": "2.4",
+    "commander": "^9.3.0",
+    "dotenv": "^16.0.1",
+    "inquirer": "^8.2.4",
+    "ws": "^8.8.0",
+    "yargs": "13.2"
+  }
+}
