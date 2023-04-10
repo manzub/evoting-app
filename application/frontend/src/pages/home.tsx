@@ -98,10 +98,10 @@ const Home: React.FC<Props> = ({ ballots, user }) => {
                   <span className="text-white-50 icon"><i className="fas fa-arrow-right"></i></span>
                   <span className="text-white text">View</span>
                 </NavLink>}
-                <button onClick={() => deleteBallot(ballot._id)} className="btn btn-danger btn-icon-split">
+                {user.role === 1 && <button onClick={() => deleteBallot(ballot._id)} className="btn btn-danger btn-icon-split">
                   <span className="text-white-50 icon"><i className="fas fa-trash"></i></span>
                   <span className="text-white text">Delete</span>
-                </button>
+                </button>}
               </div>
             </div>
           </div>
