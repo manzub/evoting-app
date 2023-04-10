@@ -26,6 +26,8 @@ const Register: React.FC = () => {
 
   async function processSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError('');
+
     try {
       if (form.address !== '') {
         const accountInfo = await backendApi.checkAccountExists(form.address);

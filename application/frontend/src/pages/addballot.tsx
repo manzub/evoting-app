@@ -33,6 +33,7 @@ const AddBallot: React.FC<Props> = ({ user }) => {
   })
 
   async function processSubmit(e: React.FormEvent<HTMLFormElement>) {
+    setError('');
     e.preventDefault();
     // TODO: add ballot id as a transaction to the blockchain under this user wallet
     try {
@@ -83,6 +84,7 @@ const AddBallot: React.FC<Props> = ({ user }) => {
                   <div className="form-group">
                     <textarea
                       rows={10}
+                      placeholder="Ballot description here"
                       value={form.description}
                       onChange={({ target }) => updateForm({ ...form, description: target.value })}
                       className="form-control" />
@@ -102,6 +104,7 @@ const AddBallot: React.FC<Props> = ({ user }) => {
                     </div>
                   </div>
                   <div className="form-group">
+                    <label htmlFor="">Ballot Duration(hrs)</label>
                     <input
                       className="form-control mb-2"
                       type="number"

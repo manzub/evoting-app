@@ -28,6 +28,7 @@ const Login = () => {
 
   function processSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    setError('');
     mutation.mutate(form);
   }
 

@@ -19,7 +19,7 @@ const Ballot: React.FC<Props> = ({ ballots, user }) => {
   const [vote, setVote] = React.useState('');
   const [error, setError] = React.useState('');
 
-  // TODO: vote mutation
+  // DONE: vote mutation
   const mutation = useMutation(function (postData: { ballotId: string, candidateId: string }) {
     if (!postData.ballotId || !postData.candidateId) throw new Error('Please select a candidate');
     return backendApi.voteCandidate(postData, (user.accessToken || ''));
@@ -29,11 +29,15 @@ const Ballot: React.FC<Props> = ({ ballots, user }) => {
         const addon = { ballotId: variables.ballotId, vote: variables.candidateId };
         await backendApi.createBallotInChain({ sender: user.address, amount: 0.01, addon });
         alert('you have successfully voted a candidate');
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
       } else throw new Error(data.message);
     }, onError: (error: Error) => setError(error.message)
   })
 
   async function processSubmit() {
+    setError('');
     try {
       const postData = { address: user.address, ballotId: currentBallot?._id };
       const voteCheck = (await axios.post(`${blockchainUrl}/evoting/ballot/has-voted`, postData)).data;

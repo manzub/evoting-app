@@ -24,6 +24,7 @@ const Home: React.FC<Props> = ({ ballots, user }) => {
   })
 
   function deleteBallot(ballotId: string) {
+    setError('');
     if (window.confirm('Are you sure you want to delete')) {
       mutation.mutate(ballotId);
     }
