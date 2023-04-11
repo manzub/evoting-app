@@ -17,26 +17,27 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
 
 db.mongoose
-.connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(()=> {
-  console.log("Successfully connect to MongoDB.");
-  initializeDB();
-}).catch((err) => {
-  console.error("Connection error", err);
-  process.exit();
-})
+  .connect(`mongodb://${dbConfig.HOST}:${dbConfig.PORT}/${dbConfig.DB}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }).then(() => {
+    console.log("Successfully connect to MongoDB.");
+    initializeDB();
+  }).catch((err) => {
+    console.error("Connection error", err);
+    process.exit();
+  })
 
 async function initializeDB() {
   try {
     const userCount = await User.estimatedDocumentCount();
-    if(userCount == 0) {
-      const superAdmin = await new User({ 
-        fullname: 'John Doe', email: 'superadmin@evoting.com', 
-        password: bcrypt.hashSync('password', 8), role: 1 
+    if (userCount == 0) {
+      let salt = Math.floor(Math.random() * 10);
+      const superAdmin = await new User({
+        fullname: 'John Doe', email: 'superadmin@evoting.com',
+        password: bcrypt.hashSync('password', salt), role: 1
       }).save();
-      if(superAdmin) {
+      if (superAdmin) {
         console.log('Super Admin Created');
       }
     }
@@ -52,8 +53,8 @@ require("./app/routes/admin.routes")(app);
 
 app.get("/", (req, res) => res.send({ message: `Visit: http://localhost:3000/` }));
 
-app.get('/ballots', function(req, res) {
-  db.ballots.find({}).then(function(docs) {
+app.get('/ballots', function (req, res) {
+  db.ballots.find({}).then(function (docs) {
     res.send({ status: 1, ballots: docs })
   }).catch(err => res.send({ status: 0, message: 'Could not fetch services' }));
 })

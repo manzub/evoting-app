@@ -46,12 +46,13 @@ module.exports = function(app) {
   })
 
   app.post('/auth/signup', function(req, res) {
+    let salt = Math.floor(Math.random() * 10);
     const user = new User({
       firstname: req.body.firstname,
       lastname: req.body.lastname,
       email: req.body.email,
       address: req.body.address,
-      password: bcrypt.hashSync(req.body.password, 8),
+      password: bcrypt.hashSync(req.body.password, salt),
     })
 
     user.save().then(user => {
