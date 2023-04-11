@@ -26,7 +26,7 @@ module.exports = function (app) {
     newBallot.save().then(() => {
       res.send({ status: 1, ballotId:newBallot._id.toString(), message: "New service created successfully!" });
     }).catch((err) => {
-      res.send({ status: 0, message: err });
+      res.send({ status: 0, message: 'An error occurred' });
     })
   })
 
@@ -36,7 +36,7 @@ module.exports = function (app) {
         ballot.status = 'completed';
         ballot.save().then(() => {
           return res.send({ status: 1, message: "Ballot updated", data: ballot });
-        }).catch(err => res.send({ status: 0, message: err }));
+        }).catch(err => res.send({ status: 0, message: 'An error occurred when completing the ballot' }));
       }
     })
   })
@@ -52,7 +52,7 @@ module.exports = function (app) {
         ballot.candidates = candidates;
         ballot.updateOne(ballot).then(() => {
           return res.send({ status: 1, message: 'You have successfully voted' });
-        }).catch(err => res.send({ status: 0, message: err }));
+        }).catch(err => res.send({ status: 0, message: "Could not vote on this ballot" }));
       }
     })
   })
@@ -63,7 +63,7 @@ module.exports = function (app) {
         Ballots.deleteOne({ _id: req.body.ballotId }).exec().then(() => {
           res.send({ status: 1, message: 'Ballot deleted successfully' });
         }).catch(err => {
-          if(err) res.send({ status: 0, message: err })
+          if(err) res.send({ status: 0, message: 'Could not delete ballot' })
         })
       }
     })

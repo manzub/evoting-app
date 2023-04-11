@@ -5,7 +5,6 @@ export const blockchainUrl = 'http://localhost:3001';
 export const backendUrl = "http://localhost:5555";
 const authRoute = `${backendUrl}/auth`;
 
-
 const authActions = {
   async signin(email: string, password: string) {
     const response = await axios.post(`${authRoute}/signin`, { email, password })
@@ -61,6 +60,16 @@ const blockchainFunctions = {
 }
 
 const backendApi = {
+  async getCsrfToken() {
+    const response = await axios.get(`${backendUrl}/ballots-prrx`)
+    return response;
+  },
+  async postBackend(url: string, postData: any, token: (boolean | string)) {
+    let csrfToken = (await this.getCsrfToken()).data.csrfToken;
+    axios.defaults.headers.post['CSRF-Token'] = csrfToken;
+    const response = await axios.post(url, postData, { headers: { 'x-access-token': token } });
+    return response.data;
+  },
   // auth routes
   ...authActions,
   ...ballotFunctions,

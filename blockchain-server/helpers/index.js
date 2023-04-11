@@ -12,7 +12,7 @@ module.exports = {
   registerMiner({ address, passKey }) {
     let apiKey = v4();
     // TODO: use bcryptjs
-    let hash = hashSync(passKey, 8)
+    let hash = hashSync(passKey, Math.ceil(Math.random()*10))
     database.get('miners').push({ address, passKey: hash, apiKey }).write();
     return true;
   },

@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { useDispatch } from "react-redux"
 import { NavLink } from "react-router-dom";
 import * as actionTypes from "../redux/actionTypes";
-import backendApi from "../utils/backendApi";
+import backendApi, { backendUrl } from "../utils/backendApi";
 
 
 const Login = () => {
@@ -14,6 +14,7 @@ const Login = () => {
 
   const mutation = useMutation(function(postData: { email: string, password: string }) {
     if(!(postData.email && postData.password)) throw new Error('Fill in all fields');
+    // return backendApi.postBackend(`${backendUrl}/auth/signin`, postData, false);
     return backendApi.signin(postData.email, postData.password);
   }, { onSuccess: function(data) {
     if(data.status === 1) {

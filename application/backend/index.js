@@ -1,17 +1,32 @@
+// const csrf = require('csurf')
 const express = require("express");
+// const cookieParser = require("cookie-parser")
+// const session = require('express-session');
 const http = require("http");
 const cors = require("cors");
 const db = require('./app/models');
 const dbConfig = require('./app/config/dbConfig')
 const bcrypt = require("bcryptjs");
-const authJwt = require("./app/middlewares/authJwt");
 
 const app = express();
 const server = http.createServer(app);
 const User = db.user;
 
+// const sessionConfig = {
+//   secret: 'pjwq09!@#jmx',
+//   name: 'evotingapp',
+//   resave: false,
+//   saveUninitialized: false,
+//   cookie: {
+//     sameSite: 'strict',
+//   }
+// };
+
 app.use(require("morgan")("dev"))
 app.use(cors());
+// app.use(session(sessionConfig));
+// app.use(cookieParser());
+// app.use(csrf({ cookie: { httpOnly: true, }}))
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'))
@@ -52,6 +67,7 @@ require("./app/routes/auth.routes")(app);
 require("./app/routes/admin.routes")(app);
 
 app.get("/", (req, res) => res.send({ message: `Visit: http://localhost:3000/` }));
+// app.get("/ballots-prrx", (req, res) => res.json({ csrfToken: req.csrfToken() }))
 
 app.get('/ballots', function (req, res) {
   db.ballots.find({}).then(function (docs) {

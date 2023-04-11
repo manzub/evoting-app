@@ -32,7 +32,7 @@ module.exports = function(app) {
 
   app.post('/auth/user-token', function(req, res) {
     jsonwebtoken.verify(req.body.token, secretKey, (err, decoded) => {
-      if (err) return res.send({ status: 0, message: err });
+      if (err) return res.send({ status: 0, message: err.message });
 
       User.findOne({ email: decoded.email }).exec((err, user) => {
         if (err) return res.send({ status: 0, message: err.message })
@@ -60,8 +60,8 @@ module.exports = function(app) {
       if([1,2,3].includes(user.role)) {
         user.save().then(() => {
           res.send({ status: 1, message: "Registration Successfull" })
-        }).catch((err) => res.send({ status: 0, message: err }))
+        }).catch((err) => res.send({ status: 0, message: 'Could not update user roles' }))
       }
-    }).catch((err) => res.send({ status: 0, message: err }));
+    }).catch((err) => res.send({ status: 0, message: 'Could not create new user' }));
   })
 }
