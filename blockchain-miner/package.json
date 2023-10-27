@@ -14,7 +14,7 @@
     "miner-cli": "./index.js"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^1.6.0",
     "boxen": "4.0",
     "chalk": "2.4",
     "commander": "^9.3.0",
