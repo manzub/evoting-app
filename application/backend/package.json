@@ -19,7 +19,7 @@
     "csrf-csrf": "^2.2.4",
     "csurf": "^1.11.0",
     "dotenv": "^16.0.3",
-    "express": "^4.18.2",
+    "express": "^4.19.2",
     "express-session": "^1.17.3",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.0.1",
