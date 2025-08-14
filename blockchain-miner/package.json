@@ -19,7 +19,7 @@
     "chalk": "2.4",
     "commander": "^9.3.0",
     "dotenv": "^16.0.1",
-    "inquirer": "^8.2.4",
+    "inquirer": "^8.2.7",
     "ws": "^8.8.0",
     "yargs": "13.2"
   }
